@@ -1,0 +1,127 @@
+swagger: "2.0"
+info:
+  title: Petstore API
+  description: Przykładowe API do testów OpenAPI Form Builder
+  version: "1.0.0"
+host: petstore.example.com
+basePath: /api/v1
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /pets:
+    get:
+      summary: Lista zwierząt
+      operationId: listPets
+      parameters:
+        - name: limit
+          in: query
+          description: Maksymalna liczba wyników
+          required: false
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 100
+        - name: status
+          in: query
+          description: Status zwierzęcia
+          required: false
+          type: string
+          enum:
+            - available
+            - pending
+            - sold
+      responses:
+        '200':
+          description: Lista zwierząt
+    post:
+      summary: Dodaj zwierzę
+      operationId: createPet
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                minLength: 1
+                maxLength: 100
+              tag:
+                type: string
+                maxLength: 50
+              status:
+                type: string
+                enum:
+                  - available
+                  - pending
+                  - sold
+              age:
+                type: integer
+                minimum: 0
+                maximum: 30
+      responses:
+        '201':
+          description: Zwierzę dodane
+  /pets/{id}:
+    get:
+      summary: Pobierz zwierzę po ID
+      operationId: getPet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+      responses:
+        '200':
+          description: Znaleziono zwierzę
+    put:
+      summary: Aktualizuj zwierzę
+      operationId: updatePet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                minLength: 1
+                maxLength: 100
+              status:
+                type: string
+                enum:
+                  - available
+                  - pending
+                  - sold
+      responses:
+        '200':
+          description: Zwierzę zaktualizowane
+    delete:
+      summary: Usuń zwierzę
+      operationId: deletePet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+      responses:
+        '204':
+          description: Zwierzę usunięte

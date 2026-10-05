@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model ApiSpec {
+  id        String   @id @default(cuid())
+  name      String
+  source    String
+  version   String
+  createdAt DateTime @default(now())
+  endpoints ApiEndpoint[]
+}
+
+model ApiEndpoint {
+  id       String @id @default(cuid())
+  specId   String
+  spec     ApiSpec @relation(fields: [specId], references: [id], onDelete: Cascade)
+  method   String
+  path     String
+  params   ApiParameter[]
+  forms    FormDefinition[]
+}
+
+model ApiParameter {
+  id               String  @id @default(cuid())
+  endpointId       String
+  endpoint         ApiEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  name             String
+  location         String
+  type             String
+  required         Boolean @default(false)
+  format           String?
+  enumValues       String?
+  description      String?
+  pattern          String?
+  minLength        Int?
+  maxLength        Int?
+  minimum          Float?
+  maximum          Float?
+  exclusiveMinimum Boolean?
+  exclusiveMaximum Boolean?
+}
+
+model FormDefinition {
+  id        String   @id @default(cuid())
+  name      String
+  endpointId String
+  endpoint  ApiEndpoint @relation(fields: [endpointId], references: [id])
+  schema    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
